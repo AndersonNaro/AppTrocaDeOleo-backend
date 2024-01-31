@@ -1,4 +1,4 @@
-package com.oleo;
+package oleo.com.br;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

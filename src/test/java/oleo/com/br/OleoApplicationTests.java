@@ -1,4 +1,4 @@
-package com.oleo;
+package oleo.com.br;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
