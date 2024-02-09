@@ -19,11 +19,15 @@ public class ProprietarioService {
         this.repository = repository;
     }
 
-    public ProprietarioEntity getProprietarioById(long id) throws ProprietarioNaoEcontradoException {
-         Optional<ProprietarioEntity> optional = repository.findById(id);
-         if (optional.isEmpty())
-             throw new ProprietarioNaoEcontradoException(id);
-         return optional.get();
+    public ProprietarioEntity getProprietarioById(long id)  {
+        try {
+            Optional<ProprietarioEntity> optional = repository.findById(id);
+            if (optional.isEmpty())
+                throw new ProprietarioNaoEcontradoException(id);
+            return optional.get();
+        } catch (ProprietarioNaoEcontradoException ex) {
+            return null;
+        }
     }
 
     public void updateProprietario(ProprietarioEntity proprietario) {
@@ -34,8 +38,14 @@ public class ProprietarioService {
         return repository.save(proprietario);
     }
 
-    public void deleteProprietario(ProprietarioEntity proprietario) {
+    public Long deleteProprietario(ProprietarioEntity proprietario) {
+        Long initialRownCount, finalRownCount;
+
+        initialRownCount = repository.count();
         repository.delete(proprietario);
+        finalRownCount = repository.count();
+
+        return initialRownCount - finalRownCount;
     }
 
 }
