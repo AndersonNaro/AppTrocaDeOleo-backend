@@ -6,6 +6,7 @@ import io.restassured.http.ContentType;
 import oleo.com.br.dto.ProprietarioDto;
 import oleo.com.br.entity.ProprietarioEntity;
 import oleo.com.br.service.MotoService;
+import oleo.com.br.service.OleoService;
 import oleo.com.br.service.ProprietarioService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,9 @@ class ProprietarioControllerTest {
 
     @MockBean
     private MotoService motoService;
+
+    @MockBean
+    private OleoService oleoService;
 
     @BeforeEach
     public void setup() {

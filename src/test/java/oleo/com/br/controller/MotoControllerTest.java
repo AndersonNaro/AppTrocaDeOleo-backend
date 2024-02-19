@@ -8,6 +8,7 @@ import oleo.com.br.dto.ProprietarioDto;
 import oleo.com.br.entity.MotoEntity;
 import oleo.com.br.entity.ProprietarioEntity;
 import oleo.com.br.service.MotoService;
+import oleo.com.br.service.OleoService;
 import oleo.com.br.service.ProprietarioService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,9 @@ public class MotoControllerTest {
     @MockBean
     ProprietarioService proprietarioService;
 
+    @MockBean
+    OleoService oleoService;
+
     private MotoDto moto;
 
     @BeforeEach
@@ -51,9 +55,6 @@ public class MotoControllerTest {
     @Test
     void deveRetornarSucesso_QuandoBuscarMotoPorId() {
 
-        ProprietarioDto proprietario = proprietarioBuilder().setMotos(Arrays.asList(moto)).build();
-
-        when(this.proprietarioService.createProprietario(proprietario)).thenReturn(proprietario);
         when(this.motoService.findMotoById(1L)).thenReturn(moto);
 
         given()
@@ -81,11 +82,7 @@ public class MotoControllerTest {
     @Test
     void deveRetornarSucesso_QuandoCriarUmaMoto() throws JsonProcessingException {
 
-        ProprietarioDto proprietario = proprietarioBuilder().setMotos(Arrays.asList(moto)).build();
-
-        when(this.motoService.createMoto(any(MotoDto.class))).thenReturn(moto);
-        when(this.proprietarioService.createProprietario(proprietario)).thenReturn(proprietario);
-
+       when(this.motoService.createMoto(any(MotoDto.class))).thenReturn(moto);
 
         ObjectMapper objectMapper = new ObjectMapper();
         System.out.println(objectMapper.writeValueAsString(moto));
