@@ -5,6 +5,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import oleo.com.br.dto.MotoDto;
+import oleo.com.br.dto.OleoDto;
+import oleo.com.br.dto.ProprietarioDto;
 
 import java.util.List;
 
@@ -13,12 +16,12 @@ import java.util.List;
 @Entity
 @Table(name = "tb_moto")
 @NoArgsConstructor
-@EqualsAndHashCode(of = {"modelo", "marca", "placa"})
+//@EqualsAndHashCode(of = {"modelo", "marca", "placa", "oleos"})
 public class MotoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_moto")
-    private Long idMoto;
+    private Long id;
 
     @Column(name = "nome")
     private String nome;
@@ -29,17 +32,18 @@ public class MotoEntity {
     @Column(name = "placa", nullable = false)
     private String placa;
 
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_proprietario")
     private ProprietarioEntity proprietario;
 
-    @OneToMany(mappedBy = "moto", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "moto" , fetch = FetchType.EAGER)
     private List<OleoEntity> oleos;
-    public MotoEntity(String nome, String modelo, String placa, ProprietarioEntity proprietario) {
+    public MotoEntity(Long id, String nome, String modelo, String placa, List<OleoEntity> oleos) {
+        this.id = id;
         this.nome = nome;
         this.modelo = modelo;
         this.placa = placa;
-        this.proprietario = proprietario;
+        this.oleos = oleos;
     }
+
 }

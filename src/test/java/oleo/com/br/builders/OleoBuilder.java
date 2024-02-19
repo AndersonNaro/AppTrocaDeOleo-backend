@@ -1,5 +1,6 @@
 package oleo.com.br.builders;
 
+import oleo.com.br.dto.OleoDto;
 import oleo.com.br.entity.MotoEntity;
 import oleo.com.br.entity.OleoEntity;
 
@@ -9,13 +10,19 @@ import static oleo.com.br.builders.MotoBuilder.motoBuilder;
 
 public class OleoBuilder {
 
-    private final OleoEntity oleo;
+    private final OleoDto oleo;
     private OleoBuilder() {
-        oleo = new OleoEntity(new Date(), true, "80000", motoBuilder().build());
+        oleo = new OleoDto(null, new Date(), "80000",true);
     }
 
     public static OleoBuilder oleoBuilder () {
         return new OleoBuilder();
+
+    }
+
+    public OleoBuilder setId(Long id) {
+        oleo.setId(id);
+        return this;
     }
 
     public OleoBuilder setFiltro(boolean filtro) {
@@ -33,12 +40,9 @@ public class OleoBuilder {
         return this;
     }
 
-    public OleoBuilder setMoto( MotoEntity moto) {
-        oleo.setMoto(moto);
-        return this;
-    }
 
-    public OleoEntity build() {
+
+    public OleoDto build() {
         return oleo;
     }
 }

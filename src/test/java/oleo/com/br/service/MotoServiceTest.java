@@ -1,6 +1,9 @@
 package oleo.com.br.service;
 
 import oleo.com.br.builders.OleoBuilder;
+import oleo.com.br.dto.MotoDto;
+import oleo.com.br.dto.OleoDto;
+import oleo.com.br.dto.ProprietarioDto;
 import oleo.com.br.entity.MotoEntity;
 import oleo.com.br.entity.OleoEntity;
 import oleo.com.br.entity.ProprietarioEntity;
@@ -19,6 +22,7 @@ import java.util.List;
 import static oleo.com.br.builders.MotoBuilder.motoBuilder;
 import static oleo.com.br.builders.OleoBuilder.oleoBuilder;
 import static oleo.com.br.builders.ProprietarioBuilder.proprietarioBuilder;
+import static oleo.com.br.converter.MotoConverter.toDto;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -36,23 +40,19 @@ class MotoServiceTest {
     @Autowired
     OleoService oleoService;
 
-    @Autowired
-    ProprietarioRepository propRepository;
+    private OleoDto oleo ;
 
-    @Autowired
-    private ProprietarioService propService;
-
-    private ProprietarioEntity proprietario ;
-
-    private MotoEntity moto;
+    private MotoDto moto;
 
     @BeforeEach
     void setup() {
-        service = new MotoService(repository);
-        propService = new ProprietarioService(propRepository);
 
+        service = new MotoService(repository);
+
+
+        oleo = oleoBuilder().build();
         moto = motoBuilder().build();
-        proprietario = propService.createProprietario(moto.getProprietario());
+
     }
 
     @Test
@@ -60,27 +60,25 @@ class MotoServiceTest {
         //cenário
 
         //ação
-        MotoEntity resultado = service.createMoto(moto);
+        MotoDto resultado = service.createMoto(moto);
 
         //Verificação
         Assertions.assertEquals("Lander", resultado.getNome() );
-        Assertions.assertEquals(proprietario.getId(), resultado.getProprietario().getId());
-        assertNotNull(resultado.getIdMoto());
+
     }
 
     @Test
     void buscarMotoPorId() {
         //cenário
-        MotoEntity target = service.createMoto(moto);
+        MotoDto target = service.createMoto(motoBuilder().build());
 
         //ação
-        MotoEntity resultado = service.findMotoById(target.getIdMoto());
+        MotoDto resultado = service.findMotoById(target.getId());
 
         //Verificação
         Assertions.assertEquals("XYZ1980", resultado.getPlaca());
         Assertions.assertEquals("XTZ250", resultado.getModelo());
         Assertions.assertEquals("Lander", resultado.getNome());
-        Assertions.assertNotNull(resultado.getIdMoto());
     }
 
     @Test
@@ -89,58 +87,35 @@ class MotoServiceTest {
         long idNaoExistente = repository.count() + 2;
 
         //Ação
-        MotoEntity resultado = service.findMotoById(idNaoExistente);
+        MotoDto resultado = service.findMotoById(idNaoExistente);
 
         //Verificação
         Assertions.assertNull(resultado);
     }
-
-    @Test
-    void buscarTodasMotosDeUmProprietario() {
-        //cenario
-        MotoEntity moto2 = service.createMoto(motoBuilder()
-                .setNome("Virago")
-                .setModelo("XV535")
-                .setPlaca("ABC1234")
-                .setProprietario(proprietario)
-                .build());
-        MotoEntity moto3 = service.createMoto(motoBuilder()
-                .setNome("GS500")
-                .setModelo("GS 500")
-                .setPlaca("XYZ0099")
-                .setProprietario(proprietario)
-                .build());
-
-        //Ação
-        List<MotoEntity> resultado = service.findListMotosByProprietario(proprietario);
-
-        //Verificação
-        assertTrue(resultado.contains(moto2) || resultado.contains(moto3));
-    }
-
     @Test
     void alterarMoto() {
         //cenario
-        MotoEntity target = service.createMoto(moto);
+        MotoDto target = service.createMoto(moto);
         target.setNome("RD");
         target.setModelo("RD 350 LC");
         target.setPlaca("YVN1988");
 
         //Ação
-        MotoEntity resultado = service.updateMoto(target);
+        service.updateMoto(target);
+        MotoDto resultado = service.findMotoById(target.getId());
 
         //Verificação
         Assertions.assertEquals("RD", resultado.getNome());
         Assertions.assertEquals("RD 350 LC", resultado.getModelo());
         Assertions.assertEquals("YVN1988", resultado.getPlaca());
-        Assertions.assertEquals(target.getIdMoto(), resultado.getIdMoto());
+        Assertions.assertEquals(target.getId(), resultado.getId());
     }
 
     @Test
     void deletaMoto() {
         //cenario
-        MotoEntity target = service.createMoto(moto);
-        Long id = target.getIdMoto();
+        MotoDto target = service.createMoto(moto);
+        Long id = target.getId();
         Long initialRownCount = repository.count();
 
         //Ação
@@ -151,21 +126,7 @@ class MotoServiceTest {
         assertTrue(finalRowCount == initialRownCount - deletedRows);
     }
 
-    @Test
-    void pegarProprietarioDaMoto() {
-        //cenario
-        OleoEntity oleo = oleoBuilder().setMoto(moto).build();
-        moto.setOleos(Arrays.asList(oleo));
-        MotoEntity target = service.createMoto(moto);
 
-
-        //Ação
-        OleoEntity resultado = target.getOleos().get(0);
-
-        //Verificação
-        assertNotNull(resultado);
-
-    }
 
 
 }

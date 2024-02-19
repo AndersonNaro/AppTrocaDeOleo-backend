@@ -1,10 +1,9 @@
 package oleo.com.br.entity;
 
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import oleo.com.br.dto.MotoDto;
+import oleo.com.br.dto.OleoDto;
 
 import java.util.Date;
 import java.util.List;
@@ -18,8 +17,8 @@ import java.util.List;
 public class OleoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_oleo", nullable = false)
-    private Long idOleo;
+    @Column(name = "id_oleo")
+    private Long id;
 
     @Column(name = "data", nullable = false)
     private Date data;
@@ -30,14 +29,15 @@ public class OleoEntity {
     @Column(name = "filtro")
     private Boolean filtro;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_moto")
     private MotoEntity moto;
 
-    public OleoEntity(Date data, boolean filtro, String km, MotoEntity moto) {
+    public OleoEntity(Long id, Date data, boolean filtro, String km) {
+        this.id = id;
         this.data = data;
         this.filtro = filtro;
         this.km = km;
-        this.moto = moto;
     }
+
 }

@@ -1,18 +1,30 @@
 package oleo.com.br.builders;
 
+import oleo.com.br.dto.MotoDto;
+import oleo.com.br.dto.ProprietarioDto;
 import oleo.com.br.entity.ProprietarioEntity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProprietarioBuilder {
 
-    private final ProprietarioEntity proprietario;
+    private final ProprietarioDto proprietario;
 
     private ProprietarioBuilder() {
-        proprietario = new ProprietarioEntity("Pessoa", "123456", "email@email.com");
+        proprietario = new ProprietarioDto(
+                null, "Pessoa", "123456", "email@email.com", new ArrayList<MotoDto>());
+    }
+
+    public ProprietarioBuilder setId(Long id) {
+        proprietario.setId(id);
+        return this;
     }
 
     public static ProprietarioBuilder proprietarioBuilder() {
         return new ProprietarioBuilder();
     }
+
 
     public ProprietarioBuilder setNome(String nome) {
         proprietario.setNome(nome);
@@ -29,8 +41,14 @@ public class ProprietarioBuilder {
         return this;
     }
 
-    public ProprietarioEntity build() {
+    public ProprietarioBuilder setMotos(List<MotoDto> motos) {
+        proprietario.setMotos(motos);
+        return this;
+    }
+
+    public ProprietarioDto build() {
         return proprietario;
     }
+
 
 }

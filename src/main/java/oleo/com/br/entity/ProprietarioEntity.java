@@ -2,7 +2,6 @@ package oleo.com.br.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.util.List;
 
 @Getter
@@ -26,12 +25,15 @@ public class ProprietarioEntity {
     @Column(name = "email")
     private String email;
 
-    @OneToMany(mappedBy = "proprietario", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "proprietario", fetch = FetchType.EAGER)
     private List<MotoEntity> motos;
 
-    public ProprietarioEntity(String nome, String senha, String email) {
+    public ProprietarioEntity(Long id, String nome, String senha, String email, List<MotoEntity> motos) {
+        this.id = id;
         this.nome = nome;
         this.senha = senha;
         this.email = email;
+        this.motos = motos;
     }
+
 }

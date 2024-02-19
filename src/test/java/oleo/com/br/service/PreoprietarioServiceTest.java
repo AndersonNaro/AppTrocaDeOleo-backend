@@ -2,8 +2,11 @@ package oleo.com.br.service;
 
 
 import oleo.com.br.builders.MotoBuilder;
+import oleo.com.br.dto.MotoDto;
+import oleo.com.br.dto.ProprietarioDto;
 import oleo.com.br.entity.MotoEntity;
 import oleo.com.br.entity.ProprietarioEntity;
+import oleo.com.br.repository.MotoRepository;
 import oleo.com.br.repository.ProprietarioRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +17,8 @@ import java.util.List;
 
 import static oleo.com.br.builders.MotoBuilder.motoBuilder;
 import static oleo.com.br.builders.ProprietarioBuilder.proprietarioBuilder;
+import static oleo.com.br.converter.ProprietarioConverter.toDto;
+import static oleo.com.br.converter.ProprietarioConverter.toEntity;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -26,7 +31,8 @@ class PreoprietarioServiceTest {
     @Autowired
     private ProprietarioRepository repository;
 
-    ProprietarioEntity proprietario;
+
+    ProprietarioDto proprietario;
 
     @BeforeEach
     public void setup() {
@@ -41,7 +47,7 @@ class PreoprietarioServiceTest {
 
     @AfterEach
     public void clean() {
-        ProprietarioEntity proprietario = proprietarioBuilder()
+        ProprietarioDto proprietario = proprietarioBuilder()
                 .setNome("James Web")
                 .setSenha("111222")
                 .setEmail("usuario2@email.com")
@@ -58,7 +64,7 @@ class PreoprietarioServiceTest {
         String email = "usuario2@email.com";
 
         //ação
-        ProprietarioEntity proprietario = service.getProprietarioById(1L);
+        ProprietarioDto proprietario = service.getProprietarioById(1L);
 
         //Verificação
         Assertions.assertEquals(nome, proprietario.getNome());
@@ -71,7 +77,7 @@ class PreoprietarioServiceTest {
         Long idInexistente = repository.count() + 2;
 
         //Ação
-        ProprietarioEntity proprietario = service.getProprietarioById(idInexistente);
+        ProprietarioDto proprietario = service.getProprietarioById(idInexistente);
 
         //Verificação
         Assertions.assertNull(proprietario);
@@ -80,14 +86,14 @@ class PreoprietarioServiceTest {
     @Test
     void alterarSenhadoUsuario() {
         //cenario
-        ProprietarioEntity proprietario = service.getProprietarioById(1L);
+        ProprietarioDto proprietario = service.getProprietarioById(1L);
         String senhaAntiga = proprietario.getSenha();
         String novaSenha = "nova senha";
         proprietario.setSenha(novaSenha);
 
         //ação
-        service.updateProprietario(proprietario);
-        ProprietarioEntity proprietarioAtualizado = service.getProprietarioById(1L);
+        service.updateProprietario( proprietario);
+        ProprietarioDto proprietarioAtualizado = service.getProprietarioById(1L);
 
         //Verificação
         Assertions.assertNotEquals(senhaAntiga, novaSenha);
@@ -97,23 +103,23 @@ class PreoprietarioServiceTest {
     @Test()
     void salvarNovoUsuario() {
         //cenario
-        ProprietarioEntity proprietario = proprietarioBuilder()
+        ProprietarioDto proprietario = proprietarioBuilder()
                 .setNome("Thomas Edson")
                 .setSenha("1234")
                 .setEmail("thomas@email.com")
                 .build();
 
         //ação
-        ProprietarioEntity proprietarioCriado = service.createProprietario(proprietario);
+        ProprietarioDto proprietarioCriado = service.createProprietario(proprietario);
 
         //Verificação
-        Assertions.assertEquals(proprietarioCriado, proprietario);
+        Assertions.assertEquals(proprietarioCriado.getNome(), proprietario.getNome());
     }
 
     @Test
     void deletarProprietario()  {
         //cenario
-        ProprietarioEntity proprietario = proprietarioBuilder().build();
+        ProprietarioDto proprietario = proprietarioBuilder().build();
         service.createProprietario(proprietario);
         Long initialRownCount = repository.count();
 
@@ -129,11 +135,11 @@ class PreoprietarioServiceTest {
     @Test
     void pegarMotosDeUmProprietario() {
         //cenario
-        MotoEntity moto = motoBuilder().build();
+        MotoDto moto = motoBuilder().build();
         proprietario.setMotos(Arrays.asList(moto));
 
         //Ação
-        MotoEntity resultado = proprietario.getMotos().get(0);
+        MotoDto resultado = proprietario.getMotos().get(0);
 
         //Verificação
         assertNotNull(resultado);

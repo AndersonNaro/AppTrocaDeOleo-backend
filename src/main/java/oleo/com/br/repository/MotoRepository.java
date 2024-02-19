@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface MotoRepository extends JpaRepository<MotoEntity, Long>  {
-    List<MotoEntity> findByProprietario(ProprietarioEntity proprietario);
+
 }

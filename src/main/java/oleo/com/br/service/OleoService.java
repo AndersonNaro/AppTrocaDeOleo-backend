@@ -1,6 +1,7 @@
 package oleo.com.br.service;
 
 import lombok.RequiredArgsConstructor;
+import oleo.com.br.dto.OleoDto;
 import oleo.com.br.entity.MotoEntity;
 import oleo.com.br.entity.OleoEntity;
 import oleo.com.br.exceptions.OleoNaoEncontradoException;
@@ -9,6 +10,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
+import static oleo.com.br.converter.OleoConverter.toDto;
+import static oleo.com.br.converter.OleoConverter.toEntity;
 
 @Service
 @RequiredArgsConstructor
@@ -20,32 +24,29 @@ public class OleoService {
         this.repository = repository;
     }
 
-    public OleoEntity createOleo(OleoEntity oleo) {
-        return repository.save(oleo);
+    public OleoDto createOleo(OleoDto oleo) {
+        return toDto(repository.save(toEntity(oleo)));
     }
 
-    public OleoEntity findOleoById(Long id) {
+    public OleoDto findOleoById(Long id) {
         Optional<OleoEntity> optional = repository.findById(id);
         try {
             if (optional.isEmpty())
                 throw new OleoNaoEncontradoException(id);
-            return optional.get();
+            return toDto(optional.get());
         } catch(OleoNaoEncontradoException ex) {
             return null;
         }
     }
 
-    public OleoEntity updateOleo(OleoEntity oleo) {
-        return repository.save(oleo);
+    public OleoDto updateOleo(OleoDto oleo) {
+        return toDto(repository.save(toEntity(oleo)));
     }
 
-    public Long deleteOleo(OleoEntity oleo) {
+    public Long deleteOleo(OleoDto oleo) {
         long initialCountRows = repository.count();
-        repository.delete(oleo);
+        repository.delete(toEntity(oleo));
         return initialCountRows - repository.count();
     }
 
-    public List<OleoEntity> findListByMoto(MotoEntity moto) {
-        return repository.findByMoto(moto);
-    }
 }
