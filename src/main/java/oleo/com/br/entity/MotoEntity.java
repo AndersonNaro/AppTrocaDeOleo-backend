@@ -16,7 +16,7 @@ import java.util.List;
 @Entity
 @Table(name = "tb_moto")
 @NoArgsConstructor
-//@EqualsAndHashCode(of = {"modelo", "marca", "placa", "oleos"})
+@EqualsAndHashCode
 public class MotoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

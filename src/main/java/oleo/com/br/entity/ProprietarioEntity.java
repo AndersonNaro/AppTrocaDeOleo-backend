@@ -8,6 +8,7 @@ import java.util.List;
 @Setter
 @Entity
 @NoArgsConstructor
+@EqualsAndHashCode
 @Table(name = "tb_proprietario")
 public class ProprietarioEntity {
 
