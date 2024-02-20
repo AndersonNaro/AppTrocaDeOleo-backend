@@ -131,6 +131,21 @@ public class OleoControllerTest {
 
     }
 
+    @Test
+    void deveRetornarSuccess_QuandoAlterarOleo() {
+        when(service.updateOleo(oleo)).thenReturn(oleo);
+        given()
+                .contentType(ContentType.JSON)
+                .body(oleo)
+                .when()
+                .patch("/oleo/update")
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .contentType(ContentType.JSON)
+                .body("id", equalTo(1),
+                        "km", equalTo("80000"))
+                .extract()
+                .as(OleoDto.class);
 
-
+    }
 }
