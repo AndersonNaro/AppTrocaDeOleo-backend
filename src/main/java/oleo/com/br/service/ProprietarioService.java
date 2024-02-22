@@ -1,5 +1,6 @@
 package oleo.com.br.service;
 
+import lombok.RequiredArgsConstructor;
 import oleo.com.br.converter.MotoConverter;
 import oleo.com.br.dto.MotoDto;
 import oleo.com.br.dto.ProprietarioDto;
@@ -17,17 +18,13 @@ import static oleo.com.br.converter.ProprietarioConverter.toDto;
 import static oleo.com.br.converter.ProprietarioConverter.toEntity;
 
 @Service
+@RequiredArgsConstructor
 public class ProprietarioService {
 
     private final ProprietarioRepository repository;
 
     @Autowired
     private MotoService motoService;
-
-    @Autowired
-    public ProprietarioService(ProprietarioRepository repository) {
-        this.repository = repository;
-    }
 
     public ProprietarioDto getProprietarioById(long id)  {
         try {
@@ -40,8 +37,8 @@ public class ProprietarioService {
         }
     }
 
-    public void updateProprietario(ProprietarioDto proprietario) {
-        repository.save(toEntity(proprietario));
+    public ProprietarioDto updateProprietario(ProprietarioDto proprietario) {
+        return toDto(repository.save(toEntity(proprietario)));
     }
 
     public ProprietarioDto createProprietario(ProprietarioDto proprietario) {

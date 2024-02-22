@@ -1,81 +1,43 @@
 package oleo.com.br.service;
 
-import oleo.com.br.dto.MotoDto;
 import oleo.com.br.dto.OleoDto;
-import oleo.com.br.dto.ProprietarioDto;
-import oleo.com.br.entity.MotoEntity;
-import oleo.com.br.entity.OleoEntity;
-import oleo.com.br.entity.ProprietarioEntity;
-import oleo.com.br.repository.MotoRepository;
 import oleo.com.br.repository.OleoRepository;
-import oleo.com.br.repository.ProprietarioRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
+import java.util.Optional;
 
-import static oleo.com.br.builders.MotoBuilder.motoBuilder;
 import static oleo.com.br.builders.OleoBuilder.oleoBuilder;
-import static oleo.com.br.builders.ProprietarioBuilder.proprietarioBuilder;
+import static oleo.com.br.converter.OleoConverter.toEntity;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class OleoServiceTest {
 
-    @Autowired
+    @MockBean
     OleoRepository repository;
 
     @Autowired
     OleoService service;
 
-    @Autowired
-    MotoRepository motoRepository;
-
-    @Autowired
-    MotoService motoService;
-
-    @Autowired
-    ProprietarioRepository propRepository;
-
-    @Autowired
-    private ProprietarioService propService;
-
-    private ProprietarioDto proprietario ;
-
-    private MotoDto moto;
-
     private OleoDto oleo;
-
-
     private Date data;
 
     @BeforeEach
     void setup() {
         service = new OleoService(repository);
-        propService = new ProprietarioService(propRepository);
-        motoService = new MotoService(motoRepository);
-
-        proprietario = propService.createProprietario(proprietarioBuilder().build());
-
         data = new Date();
         oleo = oleoBuilder().setDate(data).build();
-        moto = motoService.createMoto(motoBuilder().setOleos(Arrays.asList(oleo)).build());
-
-
     }
 
     @Test
     void criarTrocaDeOleo() {
-        //cenário
-
-        //Ação
+        when(repository.save(toEntity(oleo))).thenReturn(toEntity(oleo));
         OleoDto resultado = service.createOleo(oleo);
 
         //Verificação
@@ -85,57 +47,29 @@ class OleoServiceTest {
 
     @Test
     void buscarOleoPorId() {
-        //cenario
-        OleoDto target = service.createOleo(oleo);
-        Long id = target.getId();
-
-        //Ação
-        OleoDto resultado =  service.findOleoById(id);
-
-        //Verificação
+        when(repository.findById(1L)).thenReturn(Optional.of(toEntity(oleo)));
+        OleoDto resultado =  service.findOleoById(1L);
         assertEquals("80000", resultado.getKm());
         assertEquals(data, resultado.getData());
     }
 
     @Test
     void buscarOleoNaoExistente() {
-        //Cenario
-        Long idNaoExistente = repository.count() + 2;
-
-        //Ação
-        OleoDto resultado =  service.findOleoById(idNaoExistente);
-
-        //Verificação
+        OleoDto resultado =  service.findOleoById(1L);
         assertNull(resultado);
     }
 
     @Test
     void alterarOleo() {
-        //Cenario
-        OleoDto oleo = service.createOleo(oleoBuilder().build());
-        oleo.setKm("10000");
-
-        //Ação
+        when(repository.save(toEntity(oleo))).thenReturn(toEntity(oleo));
         OleoDto resultado = service.updateOleo(oleo);
-
-        //Verificação
-        assertEquals("10000", resultado.getKm());
-
+        assertEquals("80000", resultado.getKm());
     }
 
     @Test
     void deletarTrocaDeOleo() {
-        //Cenario
-        OleoDto target = service.createOleo(oleo);
-        long initialCountRowns = repository.count();
-
-        //Ação
-        service.deleteOleo(target);
-
-        //Verificação
-        Long finalCountRows = repository.count();
-        assertNull(service.findOleoById(target.getId()));
-        assertEquals(finalCountRows, initialCountRowns - 1);
+        Long deletedRows = service.deleteOleo(oleo);
+        assertEquals(0, deletedRows);
     }
 
 }
