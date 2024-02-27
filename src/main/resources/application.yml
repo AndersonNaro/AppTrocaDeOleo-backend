@@ -1,0 +1,29 @@
+application:
+  server:
+    port: 8080
+spring:
+  profiles:
+    active: default
+  datasource:
+    initialization-mode: always
+    url: jdbc:h2:mem:troca_oleodb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+    platform: h2
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    hibernate:
+      ddl-auto: update
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug
+        type:
+          descriptor:
+            sql:
+              BasicBinder: trace
